@@ -1,0 +1,39 @@
+import streamlit as st
+from openai import OpenAI
+#from arabic_support import support_arabic_text
+
+#support_arabic_text(all=True)
+
+
+# تهيئة مفتاح API لـ OpenAI
+client = OpenAI(api_key= st.secrets["OPENAI_API_KEY"])
+language="ar"
+# 
+def get_gym_program(Meal):
+    response = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+      
+        messages=[
+            {"role": "system", "content": f"{"انت الطاهي. \
+                    بناء على اهدافي و \
+                    اسم الوجبة اكتب لي الطريقة الصحية لإعدادها. \
+                    بالإضافة الى عدد السعرات الحرارية التي تحتويها .\
+                    في حال كام المدخل ن قبل المستخد ليس وجبة اطلب منه كتابة وجبته.\
+                    You are my Chef. \
+                    Based on my objective and my \
+                    Name of meal give me How to make mealin a healthy way. \
+                    Then add to it How many calories are expected in it.\
+                    If it is not a meal, send a message to the user asking him to enter the name of the meal"}"},
+            {"role": "user", "content": f">> اسم الوجبة: {Meal}"},
+        ]
+    )
+    return response.choices[0].message.content
+
+
+# Main page components
+
+st.title(":male-cook: Healthy chef") 
+Meal=st.text_input("Enter your Meal...")
+response = get_gym_program(Meal)
+st.markdown(response)
+                  
